@@ -8,67 +8,93 @@
 import SwiftUI
 
 struct RequisicaoViagemView: View {
+    @State private var viewModel = RequisicaoViagemViewModel()
     @State private var customerId = ""
-    @State private var origin = ""
-    @State private var destination = ""
-    @State private var isLoading = false
+    @State private var origem = ""
+    @State private var destino = ""
+    @State private var possiveisEnderecos: [String] = []
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                Text("Solicitação de Viagem")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.top)
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Solicitação de Viagem")
+                .font(.largeTitle)
+                .bold()
+                .padding(.top)
+            
+            
+            Text("ID do Usuário:")
+                .font(.headline)
+            TextField("Digite seu ID", text: $customerId)
+                .textFieldStyle(.roundedBorder)
+                .padding(.bottom, 10)
                 
-                Form {
-                    Section(header: Text("Informações do Usuário")) {
-                        TextField("ID do Usuário", text: $customerId)
-                            .keyboardType(.default)
-                            .autocapitalization(.none)
-                    }
-                    
-                    Section(header: Text("Endereços")) {
-                        TextField("Origem", text: $origin)
-                            .keyboardType(.default)
-                        
-                        TextField("Destino", text: $destination)
-                            .keyboardType(.default)
-                    }
-                }
-                
-                Button(action: {
-                    enviarSolicitacao()
-                }) {
-                    Text("Estimar Viagem")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .cornerRadius(10)
-                }
-                .disabled(isLoading || customerId.isEmpty || origin.isEmpty || destination.isEmpty)
-                
-                Spacer()
+            Text("Origem:")
+                .font(.headline)
+            TextField("Endereço de Origem", text: $origem)
+                .textFieldStyle(.roundedBorder)
+                .padding(.bottom, 10)
+                .onChange(of:origem){
+                    filtrarEnderecos(texto: origem)
             }
-            .padding()
-            //.navigationTitle("Solicitar Viagem")
+            
+            // Lista de sugestões
+            if !possiveisEnderecos.isEmpty {
+                List(possiveisEnderecos, id: \.self) { address in
+                    Text(address)
+                        .onTapGesture {
+                            origem = address
+                            possiveisEnderecos.removeAll()
+                        }
+                    }
+                    .frame(maxHeight: 150)
+            }
+                
+            Text("Destino:")
+                .font(.headline)
+            
+            TextField("Endereço de Destino", text: $destino)
+                .textFieldStyle(.roundedBorder)
+                .onChange(of:destino){
+                    filtrarEnderecos(texto:destino)
+            }
+            
+            
+            Button(action: {
+                enviarSolicitacao()
+            }) {
+                Text("Solicitar Viagem")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.black)
+                    .cornerRadius(10)
+            }
+            .disabled(customerId.isEmpty || origem.isEmpty || destino.isEmpty)
+            
+            Spacer()  // Preenche o espaço restante
+        }
+        .padding()
+        .onReceive(viewModel.$enderecos) {
+            enderecos in possiveisEnderecos = enderecos
         }
     }
     
     private func enviarSolicitacao() {
-        isLoading = true
-        // Aqui será feita a chamada para a API
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            isLoading = false
-            print("Solicitação enviada!")
-        }
+        print("Solicitação enviada!")
+    }
+    
+    private func filtrarEnderecos(texto: String) {
+            if texto.isEmpty {
+                possiveisEnderecos.removeAll()
+            } else {
+                viewModel.searchAddress(query: texto)
+                }
     }
 }
 
 #Preview {
-    RideRequestView()
+    RequisicaoViagemView()
 }
 
 

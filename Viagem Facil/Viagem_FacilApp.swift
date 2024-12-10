@@ -11,7 +11,7 @@ import SwiftUI
 struct Viagem_FacilApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }

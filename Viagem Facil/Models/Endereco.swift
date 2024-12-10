@@ -6,9 +6,26 @@
 //
 import Foundation
 
-struct Address: Decodable {
-    let street: String
-    let city: String
-    let state: String
-    let country: String
+struct EnderecoResponse: Decodable {
+    let results: [EnderecoWrapper]
 }
+
+struct EnderecoWrapper: Decodable {
+    let endereco: Endereco
+}
+
+struct Endereco: Decodable {
+    let rua: String
+    let cidade: String
+    let estado: String
+    let pais: String
+    
+    enum CodingKeys: String, CodingKey {
+            case rua = "addressLine"
+            case cidade = "municipality"
+            case estado = "countrySubdivision"
+            case pais = "country"
+        }
+}
+
+

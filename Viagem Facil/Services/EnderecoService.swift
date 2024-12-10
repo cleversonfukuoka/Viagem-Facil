@@ -5,11 +5,13 @@
 //  Created by Cleverson Fukuoka on 09/12/24.
 //
 
-class AddressService {
+import Foundation
+
+class EnderecoService {
     private let baseURL = "https://atlas.microsoft.com/search/address"
 
     /// Faz a busca de endereços com base em uma palavra-chave.
-    func fetchAddresses(query: String, completion: @escaping (Result<[Address], Error>) -> Void) {
+    func fetchAddresses(query: String, completion: @escaping (Result<[Endereco], Error>) -> Void) {
         guard let url = URL(string: "\(baseURL)json?api-version=1.0&query=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")") else {
             completion(.failure(NSError(domain: "URL inválida", code: 400, userInfo: nil)))
             return
@@ -32,8 +34,9 @@ class AddressService {
             }
             
             do {
-                let addresses = try JSONDecoder().decode([Address].self, from: data)
-                completion(.success(addresses))
+                let decodedResponse = try JSONDecoder().decode(EnderecoResponse.self, from: data)
+                let enderecos = decodedResponse.results.map { $0.endereco }
+                completion(.success(enderecos))
             } catch {
                 completion(.failure(error))
             }

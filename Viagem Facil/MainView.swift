@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  MainView.swift
 //  Viagem Facil
 //
 //  Created by Cleverson Fukuoka on 08/12/24.
@@ -7,18 +7,34 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainView: View {
+    @State private var selectedTab = 0
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView(selection: $selectedTab) {
+            
+            RequisicaoViagemView()
+                .tabItem {
+                    Label("Solicitar", systemImage: "car.fill")
+                }
+                .tag(0)
+            
+            OpcoesViagemView()//RideOptionsView()
+                .tabItem {
+                    Label("Opções", systemImage: "list.bullet")
+                }
+                .tag(1)
+            
+            HistoricoViagemView()//RideHistoryView()
+                .tabItem {
+                    Label("Histórico", systemImage: "clock.fill")
+                }
+                .tag(2)
         }
-        .padding()
+        .accentColor(.black) // Cor de destaque
     }
 }
 
 #Preview {
-    ContentView()
+    MainView()
 }
