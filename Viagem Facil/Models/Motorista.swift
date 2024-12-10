@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Motorista: Identifiable {
-    let id = UUID()
+struct Motorista: Codable, Identifiable {
+    let id: Int
     let nome: String
     let descricao: String
     let veiculo: String

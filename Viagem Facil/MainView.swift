@@ -19,17 +19,11 @@ struct MainView: View {
                 }
                 .tag(0)
             
-            OpcoesViagemView()//RideOptionsView()
-                .tabItem {
-                    Label("Opções", systemImage: "list.bullet")
-                }
-                .tag(1)
-            
             HistoricoViagemView()//RideHistoryView()
                 .tabItem {
                     Label("Histórico", systemImage: "clock.fill")
                 }
-                .tag(2)
+                .tag(1)
         }
         .accentColor(.black) // Cor de destaque
     }

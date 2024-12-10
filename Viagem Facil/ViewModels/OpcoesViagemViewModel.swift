@@ -14,8 +14,8 @@ class OpcoesDeViagemViewModel: ObservableObject {
     // Simula a requisição para buscar motoristas
     func buscarMotoristas() {
         motoristas = [
-            Motorista(nome: "João", descricao: "Motorista Experiente", veiculo: "Toyota Corolla", avaliacao: 4.8, valor: 35.00),
-            Motorista(nome: "Maria", descricao: "Rápida e segura", veiculo: "Honda Civic", avaliacao: 4.7, valor: 33.50)
+            Motorista(id: 0, nome: "João", descricao: "Motorista Experiente", veiculo: "Toyota Corolla", avaliacao: 4.8, valor: 35.00),
+            Motorista(id: 1, nome: "Maria", descricao: "Rápida e segura", veiculo: "Honda Civic", avaliacao: 4.7, valor: 33.50)
         ]
     }
     

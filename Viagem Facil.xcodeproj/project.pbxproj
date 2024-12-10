@@ -14,7 +14,7 @@
 		48D0E7702D07EB4C00D93B5F /* Exceptions for "Viagem Facil" folder in "Viagem Facil" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Services/Untitled.swift,
+				Services/ViagemService.swift,
 			);
 			target = 48D0E7362D067FEC00D93B5F /* Viagem Facil */;
 		};

@@ -6,27 +6,23 @@
 //
 
 import Foundation
-import Combine
 
-class RequisicaoViagemViewModel: ObservableObject {
-    @Published var enderecos: [String] = []
-    @Published var errorMessage: String?
-
-    private let service = EnderecoService()
+@Observable
+class RequisicaoViagemViewModel {
     
-    func searchAddress(query: String) {
-        service.fetchAddresses(query: query) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let listaEnderecos):
-                    self?.enderecos = listaEnderecos.map {
-                        endereco in
-                        "\(endereco.rua), \(endereco.cidade), \(endereco.estado), \(endereco.pais)"
-                    }
-                case .failure(let error):
-                    self?.errorMessage = error.localizedDescription
-                }
-            }
-        }
+    private let fetcher = ViagemService()
+    
+    var viagem: Viagem
+    
+    init() {
+        
+    }
+    
+    func postEstimarViagem(usuarioId: String, origem: String, destino: String) async {
+        viagem = await fetcher.estimarViagemAsync(
+            usuarioId: usuarioId,
+            origem: origem,
+            destino: destino
+        )
     }
 }

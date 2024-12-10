@@ -7,7 +7,7 @@
 import Foundation
 
 struct EnderecoResponse: Decodable {
-    let results: [EnderecoWrapper]
+    let resultados: [EnderecoWrapper]
 }
 
 struct EnderecoWrapper: Decodable {

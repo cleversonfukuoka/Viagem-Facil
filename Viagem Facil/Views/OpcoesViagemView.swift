@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct OpcoesViagemView: View {
+    var viagem: Viagem?
     @StateObject private var viewModel = OpcoesDeViagemViewModel()
     
     var body: some View {
