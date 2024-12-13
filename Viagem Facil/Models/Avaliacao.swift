@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct Avaliacao: Codable {
-    let rating: Double
-    let comment: String
+struct Avaliacao: Decodable {
+    let pontuacao: Int
+    let comentario: String
+    
+    enum CodingKeys: String, CodingKey {
+        case pontuacao = "rating"
+        case comentario = "comment"
+    }
 }

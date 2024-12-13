@@ -10,22 +10,9 @@
 		48D0E7372D067FEC00D93B5F /* Viagem Facil.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Viagem Facil.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		48D0E7702D07EB4C00D93B5F /* Exceptions for "Viagem Facil" folder in "Viagem Facil" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Services/ViagemService.swift,
-			);
-			target = 48D0E7362D067FEC00D93B5F /* Viagem Facil */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		48D0E7392D067FEC00D93B5F /* Viagem Facil */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				48D0E7702D07EB4C00D93B5F /* Exceptions for "Viagem Facil" folder in "Viagem Facil" target */,
-			);
 			path = "Viagem Facil";
 			sourceTree = "<group>";
 		};

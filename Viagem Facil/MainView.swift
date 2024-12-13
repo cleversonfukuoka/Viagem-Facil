@@ -1,6 +1,6 @@
 //
 //  MainView.swift
-//  Viagem Facil
+//  SolicitacaoCorrida Facil
 //
 //  Created by Cleverson Fukuoka on 08/12/24.
 //
@@ -12,20 +12,20 @@ struct MainView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            
-            RequisicaoViagemView()
+            SolicitarViagemView()
                 .tabItem {
                     Label("Solicitar", systemImage: "car.fill")
                 }
                 .tag(0)
             
-            HistoricoViagemView()//RideHistoryView()
+            SolicitarHistoricoView()
                 .tabItem {
                     Label("Histórico", systemImage: "clock.fill")
                 }
                 .tag(1)
         }
-        .accentColor(.black) // Cor de destaque
+        .accentColor(.black)
+        
     }
 }
 

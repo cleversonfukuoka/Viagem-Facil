@@ -1,27 +1,37 @@
+//
+//  APIService.swift
+//  SolicitacaoCorrida Facil
+//
+//  Created by Cleverson Fukuoka on 10/12/24.
+//
+
 
 import Foundation
 
 struct ViagemService {
     private enum ViagemError: Error {
         case badResponse
+        case decodingError
     }
     
-    private let baseURL = "https://xd5zl5kk2yltomvw5fb37y3bm40vsyrx.lambda-url.sa-east-1.on.aws"
+    private let baseURL = URL(filePath: "https://xd5zl5kk2yltomvw5fb37y3bm40vsyrx.lambda-url.sa-east-1.on.aws")!
 
-    func estimarViagemAsync(id: String, origem: String, destino: String) async throws -> Viagem {
-        let estimarViagemURL = baseURL.appending(path: "ride/estimate")
+    func estimarSolicitacaoViagemAsync(usuarioId: String, origem: String, destino: String) async throws -> SolicitacaoViagem {
+        let estimarSolicitacaoViagemURL = baseURL.appending(path: "ride/estimate")
         
         // Criando o corpo da requisição como um dicionário
         let body: [String: Any] = [
-            "customer_id": id,
+            "customer_id": usuarioId,
             "origin": origem,
             "destination": destino
         ]
         
         // Convertendo o corpo para JSON
-        let bodyData = try JSONSerialization.data(withJSONObject: body)
+        guard let bodyData = try? JSONSerialization.data(withJSONObject: body, options: []) else {
+            throw ViagemError.decodingError
+        }
         
-        var request = URLRequest(url: estimarViagemURL)
+        var request = URLRequest(url: estimarSolicitacaoViagemURL)
         request.httpMethod = "POST"  // Definindo o método como POST
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")  // Definindo o tipo do conteúdo
         request.httpBody = bodyData  // Adicionando o corpo na requisição
@@ -29,20 +39,39 @@ struct ViagemService {
         // Realizando a requisição
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw FetchError.badResponse
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw ViagemError.badResponse
         }
-        
-        // Decodificando a resposta em um objeto da classe Viagem
-        let estimativa = try JSONDecoder().decode(Viagem.self, from: data)
-        
-        return estimativa
+                
+        // Decodificando a resposta da API
+        do {
+            if let responseDataString = String(data: data, encoding: .utf8) {
+                print("Resposta da API: \(responseDataString)")
+            }
+            let SolicitacaoViagem = try JSONDecoder().decode(SolicitacaoViagem.self, from: data)
+            return SolicitacaoViagem
+        } catch let DecodingError.dataCorrupted(context) {
+            print("Dados corrompidos: \(context.debugDescription)")
+            throw ViagemError.decodingError
+        } catch let DecodingError.keyNotFound(key, context) {
+            print("Chave não encontrada: \(key.stringValue) no \(context.debugDescription)")
+            throw ViagemError.decodingError
+        } catch let DecodingError.typeMismatch(type, context) {
+            print("Tipo incompatível: \(type) no \(context.debugDescription)")
+            throw ViagemError.decodingError
+        } catch let DecodingError.valueNotFound(value, context) {
+            print("Valor não encontrado: \(value) no \(context.debugDescription)")
+            throw ViagemError.decodingError
+        } catch {
+            print("Erro desconhecido: \(error.localizedDescription)")
+            throw ViagemError.decodingError
+        }
     }
 
     
-    func confirmarViagemAsync(id: String, origem: String, destino: String, distancia: Double, duracao: String, motorista: Motorista, valor: Double) async throws -> Viagem {
+    func confirmarSolicitacaoViagemAsync(id: String, origem: String, destino: String, distancia: Double, duracao: String, motorista: Motorista, valor: Double) async throws -> SolicitacaoViagem {
         
-        let confirmarViagemURL = baseURL.appending(path: "ride/confirm")
+        let confirmarSolicitacaoViagemURL = baseURL.appending(path: "ride/confirm")
         
         // Criando o corpo da requisição com os parâmetros para atualização
         let body: [String: Any] = [
@@ -58,7 +87,7 @@ struct ViagemService {
         // Convertendo o corpo para JSON
         let bodyData = try JSONSerialization.data(withJSONObject: body)
         
-        var request = URLRequest(url: confirmarViagemURL)
+        var request = URLRequest(url: confirmarSolicitacaoViagemURL)
         request.httpMethod = "PATCH"  // Definindo o método como PATCH
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")  // Definindo o tipo do conteúdo
         request.httpBody = bodyData  // Adicionando o corpo na requisição
@@ -68,27 +97,40 @@ struct ViagemService {
         
         // Verificando a resposta da requisição
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw FetchError.badResponse
+            throw ViagemError.badResponse
         }
         
-        // Decodificando a resposta em um objeto da classe Viagem
-        let viagem = try JSONDecoder().decode(Viagem.self, from: data)
+        // Decodificando a resposta em um objeto da classe SolicitacaoViagem
+        let SolicitacaoViagem = try JSONDecoder().decode(SolicitacaoViagem.self, from: data)
         
-        return viagem
+        return SolicitacaoViagem
     }
 
     
-    func listarViagemPorUsuarioAsync(usuarioId: String, motoristaId: String) async throws -> [Viagem] {
-        let listarViagemURL = baseURL.appending(path: "ride/")
-        let fetchURL = listarViagemURL.appending(queryItems: [URLQueryItem(name:"customer_id", value: usuarioId), URLQueryItem(name: "driver_id", value: motoristaId)])
-        let (data, response) = try await URLSession.shared.data(from: fetchURL)
+    func listarHistoricoViagemPorUsuarioAsync(usuarioId: String, motoristaId: String?) async throws -> [Historico] {
+        let listarHistoricoViagemURL = baseURL.appending(path: "ride/CT01")
         
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw FetchError.badResponse
+        // Configurando os parâmetros de consulta
+        var queryItems: [URLQueryItem] = []
+        
+        if let motoristaId = motoristaId {
+            queryItems.append(URLQueryItem(name: "driver_id", value: motoristaId))
         }
         
-        let listaviagem = try JSONDecoder().decode([Viagem].self, from: data)
-        return listaviagem
+        var urlComponents = URLComponents(url: listarHistoricoViagemURL, resolvingAgainstBaseURL: false)!
+                urlComponents.queryItems = queryItems
+                guard let fetchURL = urlComponents.url else {
+                    throw URLError(.badURL)
+                }
+                
+                let (data, response) = try await URLSession.shared.data(from: fetchURL)
+
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    throw URLError(.badServerResponse)
+                }
+
+                let listaHistoricoSolicitacaoViagem = try JSONDecoder().decode([Historico].self, from: data)
+                return listaHistoricoSolicitacaoViagem
     }
 }
 

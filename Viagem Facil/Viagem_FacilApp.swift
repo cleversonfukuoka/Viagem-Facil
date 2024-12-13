@@ -1,6 +1,6 @@
 //
-//  Viagem_FacilApp.swift
-//  Viagem Facil
+//  SolicitacaoCorrida_FacilApp.swift
+//  SolicitacaoCorrida Facil
 //
 //  Created by Cleverson Fukuoka on 08/12/24.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Viagem_FacilApp: App {
+struct SolicitacaoCorrida_FacilApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
